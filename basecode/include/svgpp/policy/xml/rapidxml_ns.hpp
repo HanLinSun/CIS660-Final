@@ -13,6 +13,7 @@
 #include <svgpp/detail/namespace.hpp>
 #include <svgpp/policy/xml/fwd.hpp>
 #include <boost/range/iterator_range.hpp>
+#include <rapid_xml/rapidxml_ns.hpp>
 
 namespace svgpp { namespace policy { namespace xml
 {
