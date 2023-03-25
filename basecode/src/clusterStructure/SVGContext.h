@@ -19,6 +19,7 @@ public:
 
     void loadSVGFromFile(const char* path,float size);
     NSVGshape* getShapesFromImage();
+    NSVGimage* getSVGImage();
 
 private:
     NSVGimage* m_image;

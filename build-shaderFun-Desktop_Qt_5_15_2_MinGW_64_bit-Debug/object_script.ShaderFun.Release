@@ -2,6 +2,7 @@ release/qrc_glsl.o
 release/qrc_textures.o
 release/qrc_objs.o
 release/SVGContext.o
+release/SVGRasterizer.o
 release/main.o
 release/mainwindow.o
 release/mygl.o

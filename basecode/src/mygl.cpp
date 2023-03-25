@@ -53,12 +53,13 @@ void MyGL::initializeGL()
     // Create a Vertex Attribute Object
     glGenVertexArrays(1, &m_vao);
 
-    createRenderBuffers();
+  //  createRenderBuffers();
 
+    createSVGRenderBuffer();
     m_geomQuad.create();
 
     //hard code here(seems must use const char in svg parser)
-    const char* path = "D:\\CIS660\\CIS660-Final\\basecode\\testPicture\\testPic.svg";
+    const char* path = "D:\\CIS660\\CIS660-Final\\basecode\\testPicture\\bell.svg";
     svgContext.loadSVGFromFile(path,96);
 
 
@@ -90,9 +91,12 @@ void MyGL::paintGL()
     //Set Camera Pos(self implement)
     mp_progSurfaceCurrent->setCameraPosition(m_camera);
 
-    render3DScene();
+   // render3DScene();
 
-    performPostprocessRenderPass();
+
+    drawFrame();
+
+    //performPostprocessRenderPass();
 
     mp_progSurfaceCurrent->setTime(m_time);
     mp_progPostprocessCurrent->setTime(m_time);
@@ -183,6 +187,12 @@ void MyGL::createRenderBuffers()
     }
 }
 
+void MyGL::createSVGRenderBuffer()
+{
+    glGenFramebuffers(1, &m_SVGFrameBuffer);
+    glGenTextures(1, &m_SVGRenderTexture);
+    glGenRenderbuffers(1, &m_depthRenderBuffer);
+}
 void MyGL::createShaders()
 {
     // Surface shaders
@@ -257,8 +267,6 @@ void MyGL::createMeshes()
     cube->loadTexture();
     cube->loadBGTexture();
     m_models.push_back(cube);
-
-
 
     slot_setCurrentModel(0);
 }
@@ -392,5 +400,65 @@ void MyGL::drawPath(float* pts, int npts, char closed, float tol)
 
 void MyGL::drawFrame()
 {
+    int width = this->width(), height = this->height();
+    float view[4], cx, cy, hw, hh, aspect, px;
+    NSVGshape* shape;
+    NSVGpath* path;
 
+    glBindFramebuffer(GL_FRAMEBUFFER,m_SVGFrameBuffer);
+    glViewport(0, 0, width* this->devicePixelRatio(), height* this->devicePixelRatio());
+    glClearColor(1.0f, 0.f, 0.f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_TEXTURE_2D);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    NSVGimage* g_image = svgContext.getSVGImage();
+    // Fit view to bounds
+    cx = g_image->width*0.5f;
+    cy = g_image->height*0.5f;
+    hw = g_image->width*0.5f;
+    hh = g_image->height*0.5f;
+
+        if (width/hw < height/hh) {
+            aspect = (float)height / (float)width;
+            view[0] = cx - hw * 1.2f;
+            view[2] = cx + hw * 1.2f;
+            view[1] = cy - hw * 1.2f * aspect;
+            view[3] = cy + hw * 1.2f * aspect;
+        } else {
+            aspect = (float)width / (float)height;
+            view[0] = cx - hh * 1.2f * aspect;
+            view[2] = cx + hh * 1.2f * aspect;
+            view[1] = cy - hh * 1.2f;
+            view[3] = cy + hh * 1.2f;
+        }
+        // Size of one pixel.
+        px = (view[2] - view[1]) / (float)width;
+
+        glOrtho(view[0], view[2], view[3], view[1], -1, 1);
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        glDisable(GL_DEPTH_TEST);
+        glColor4ub(255,0,255,255);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+
+        // Draw bounds
+        glColor4ub(0,0,0,64);
+        glBegin(GL_LINE_LOOP);
+        glVertex2f(0, 0);
+        glVertex2f(g_image->width, 0);
+        glVertex2f(g_image->width, g_image->height);
+        glVertex2f(0, g_image->height);
+        glEnd();
+
+        for (shape = g_image->shapes; shape != NULL; shape = shape->next) {
+            for (path = shape->paths; path != NULL; path = path->next) {
+                drawPath(path->pts, path->npts, path->closed, px * 1.5f);
+            }
+        }
 }

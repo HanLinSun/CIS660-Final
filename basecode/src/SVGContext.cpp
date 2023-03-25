@@ -8,6 +8,11 @@ NSVGshape* SVGContext::getShapesFromImage()
     return m_image->shapes;
 }
 
+NSVGimage* SVGContext::getSVGImage()
+{
+    return m_image;
+}
+
 void SVGContext::loadSVGFromFile(const char* path,float size)
 {
     m_image = nsvgParseFromFile(path, "px", size);
