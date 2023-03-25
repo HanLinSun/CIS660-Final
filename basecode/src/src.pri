@@ -2,6 +2,8 @@ INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
 SOURCES += \
+    $$PWD/SVGContext.cpp \
+    $$PWD/SVGRasterizer.cpp \
     $$PWD/main.cpp \
     $$PWD/mainwindow.cpp \
     $$PWD/mygl.cpp \
@@ -22,7 +24,8 @@ SOURCES += \
     $$PWD/openglcontext.cpp
 
 HEADERS += \
-    $$PWD/clusterStructure/TextureStructure.h \
+    $$PWD/clusterStructure/SVGContext.h \
+    $$PWD/clusterStructure/SVGRasterizer.h \
     $$PWD/clusterStructure/computeHelper.h \
     $$PWD/la.h \
     $$PWD/mainwindow.h \

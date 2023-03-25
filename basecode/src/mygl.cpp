@@ -14,7 +14,7 @@ MyGL::MyGL(QWidget *parent)
       m_frameBuffer(-1),
       m_renderedTexture(-1),
       m_depthRenderBuffer(-1),
-      m_time(0.f), m_mousePosPrev()
+      m_time(0.f), m_mousePosPrev(),svgContext()
 {
     setFocusPolicy(Qt::StrongFocus);
 }
@@ -49,12 +49,18 @@ void MyGL::initializeGL()
 
     printGLErrorLog();
 
+
     // Create a Vertex Attribute Object
     glGenVertexArrays(1, &m_vao);
 
     createRenderBuffers();
 
     m_geomQuad.create();
+
+    //hard code here(seems must use const char in svg parser)
+    const char* path = "D:\\CIS660\\CIS660-Final\\basecode\\testPicture\\testPic.svg";
+    svgContext.loadSVGFromFile(path,96);
+
 
     createShaders();
     createMeshes();
@@ -83,6 +89,7 @@ void MyGL::paintGL()
 {
     //Set Camera Pos(self implement)
     mp_progSurfaceCurrent->setCameraPosition(m_camera);
+
     render3DScene();
 
     performPostprocessRenderPass();
@@ -123,6 +130,7 @@ void MyGL::performPostprocessRenderPass()
     // Render the frame buffer as a texture on a screen-size quad
 
     // Tell OpenGL to render to the viewport's frame buffer
+
     glBindFramebuffer(GL_FRAMEBUFFER, this->defaultFramebufferObject());
     // Render on the whole framebuffer, complete from the lower left corner to the upper right
     glViewport(0,0,this->width() * this->devicePixelRatio(), this->height() * this->devicePixelRatio());
@@ -313,4 +321,76 @@ void MyGL::bindAppropriateTexture()
     {
         mp_modelCurrent->bindTexture();
     }
+}
+
+
+float MyGL::distPtSeg(float x, float y, float px, float py, float qx, float qy)
+{
+    float pqx, pqy, dx, dy, d, t;
+    pqx = qx-px;
+    pqy = qy-py;
+    dx = x-px;
+    dy = y-py;
+    d = pqx*pqx + pqy*pqy;
+    t = pqx*dx + pqy*dy;
+    if (d > 0) t /= d;
+    if (t < 0) t = 0;
+    else if (t > 1) t = 1;
+    dx = px + t*pqx - x;
+    dy = py + t*pqy - y;
+    return dx*dx + dy*dy;
+}
+
+void MyGL::cubicBezierCurve
+(float x1, float y1, float x2, float y2,float x3, float y3, float x4, float y4,float tol, int level)
+{
+    float x12,y12,x23,y23,x34,y34,x123,y123,x234,y234,x1234,y1234;
+        float d;
+
+        if (level > 12) return;
+
+        x12 = (x1+x2)*0.5f;
+        y12 = (y1+y2)*0.5f;
+        x23 = (x2+x3)*0.5f;
+        y23 = (y2+y3)*0.5f;
+        x34 = (x3+x4)*0.5f;
+        y34 = (y3+y4)*0.5f;
+        x123 = (x12+x23)*0.5f;
+        y123 = (y12+y23)*0.5f;
+        x234 = (x23+x34)*0.5f;
+        y234 = (y23+y34)*0.5f;
+        x1234 = (x123+x234)*0.5f;
+        y1234 = (y123+y234)*0.5f;
+
+        d = distPtSeg(x1234, y1234, x1,y1, x4,y4);
+        if (d > tol*tol) {
+            cubicBezierCurve(x1,y1, x12,y12, x123,y123, x1234,y1234, tol, level+1);
+            cubicBezierCurve(x1234,y1234, x234,y234, x34,y34, x4,y4, tol, level+1);
+        } else {
+            glVertex2f(x4, y4);
+        }
+}
+
+void MyGL::drawPath(float* pts, int npts, char closed, float tol)
+{
+    int i;
+
+    unsigned char lineColor[4] = {0,192,192,255};
+
+    glBegin(GL_LINE_STRIP);
+    glColor4ubv(lineColor);
+    glVertex2f(pts[0], pts[1]);
+    for (i = 0; i < npts-1; i += 3) {
+        float* p = &pts[i*2];
+        cubicBezierCurve(p[0],p[1], p[2],p[3], p[4],p[5], p[6],p[7], tol, 0);
+    }
+    if (closed) {
+        glVertex2f(pts[0], pts[1]);
+    }
+    glEnd();
+}
+
+void MyGL::drawFrame()
+{
+
 }

@@ -3,3 +3,7 @@
 
 #endif // COMPUTEHELPER_H
 
+static void PoissonDiskSample()
+{
+
+}

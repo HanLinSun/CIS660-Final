@@ -11,6 +11,7 @@ win32 {
 }
 CONFIG += warn_on
 CONFIG += debug
+CONFIG += resources_big
 
 INCLUDEPATH += include
 
@@ -30,6 +31,7 @@ RESOURCES += glsl.qrc \
     QMAKE_CXXFLAGS += -Wno-strict-aliasing
     QMAKE_CXXFLAGS += -fno-omit-frame-pointer
 }
+
 linux-clang*|linux-g++*|macx-clang*|macx-g++* {
     message("Enabling stack protector")
     QMAKE_CXXFLAGS += -fstack-protector-all

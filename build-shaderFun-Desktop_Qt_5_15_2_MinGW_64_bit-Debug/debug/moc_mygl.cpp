@@ -7,7 +7,7 @@
 *****************************************************************************/
 
 #include <memory>
-#include "../../assignment_package/src/mygl.h"
+#include "../../basecode/src/mygl.h"
 #include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)

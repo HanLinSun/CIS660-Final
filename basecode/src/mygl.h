@@ -14,6 +14,7 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLShaderProgram>
 
+#include <clusterStructure/SVGContext.h>
 
 class MyGL
     : public OpenGLContext
@@ -71,6 +72,9 @@ private:
     // m_frameBuffers[i] writes to m_depthRenderBuffers[i].
     GLuint m_depthRenderBuffer;
 
+    GLuint m_SVGFrameBuffer;
+    GLuint m_SVGRenderTexture;
+
     // A variable used to keep track of the time elapsed.
     // It increments by 1 at the end of each call of paintGL().
     // In paintGL, it is passed to the currently bound surface and post-process shaders,
@@ -80,6 +84,10 @@ private:
     // clicking and dragging on the GL viewport. Used to move the camera
     // in the scene.
     glm::vec2 m_mousePosPrev;
+
+
+    //SVG File
+    SVGContext svgContext;
 
 private:
     // Sets up the arrays of frame buffers
@@ -108,11 +116,21 @@ private:
 
     void render3DScene();
 
+    //SVG render function
+    void renderSVG();
+
     // A helper function that iterates through
     // each of the render passes required by the
     // currently bound post-process shader and
     // invokes them.
     void performPostprocessRenderPass();
+
+    //Draw bezier curve
+
+    float distPtSeg(float x, float y, float px, float py,float qx,float qy);
+    void cubicBezierCurve(float x1, float y1, float x2, float y2,float x3, float y3, float x4, float y4,float tol, int level);
+    void drawPath(float* pts, int npts, char closed, float tol);
+    void drawFrame();
 
 
 public:
