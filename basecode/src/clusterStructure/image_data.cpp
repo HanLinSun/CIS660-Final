@@ -35,7 +35,7 @@ float image_data::calculate_distance(sample* nSo, sample* nS1){
             std::vector<int> hs2 = histogram_distribution(this->sample_data[key2].get()->position, cluster_data[this->sample_data[key2].get()->cluster_ID].get());
             w=0;
             for(int i=0;i<24;i++){
-                w+= pow(hs1[i]-hs2[i],2)/(hs1[i]+hs2[i]);
+                w+= pow(hs1[i]-hs2[i],2.f)/(hs1[i]+hs2[i]);
             }
 
             sample_distance +=0.5*w;

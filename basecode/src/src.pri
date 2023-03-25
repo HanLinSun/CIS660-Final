@@ -27,6 +27,7 @@ SOURCES += \
 
 HEADERS += \
     $$PWD/clusterStructure/SVGContext.h \
+    $$PWD/clusterStructure/SVGRasterizer.h \
     $$PWD/clusterStructure/cluster.h \
     $$PWD/clusterStructure/computeHelper.h \
     $$PWD/clusterStructure/image_data.h \

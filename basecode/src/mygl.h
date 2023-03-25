@@ -14,6 +14,8 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLShaderProgram>
 
+#include <QImage>
+
 #include <clusterStructure/SVGContext.h>
 
 class MyGL
@@ -88,6 +90,8 @@ private:
 
     //SVG File
     SVGContext svgContext;
+    QImage SVGPic;
+
 
 private:
     // Sets up the arrays of frame buffers
@@ -133,6 +137,8 @@ private:
 
     void createSVGRenderBuffer();
     void drawFrame();
+
+    void drawQImage();
 
 
 public:

@@ -1,5 +1,6 @@
 #include <mainwindow.h>
 
+#include <QLabel>
 #include <QApplication>
 #include <QSurfaceFormat>
 #include <QDebug>

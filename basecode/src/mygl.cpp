@@ -2,6 +2,7 @@
 #include <la.h>
 #include <QResizeEvent>
 #include <iostream>
+#include <QImageWriter>
 
 
 MyGL::MyGL(QWidget *parent)
@@ -62,6 +63,8 @@ void MyGL::initializeGL()
     const char* path = "D:\\CIS660\\CIS660-Final\\basecode\\testPicture\\bell.svg";
     svgContext.loadSVGFromFile(path,96);
 
+    string pathSave = "D:\\CIS660\\CIS660-Final\\basecode\\testPicture\\testSave.svg";
+    svgContext.saveModifiedSVGImage(pathSave.c_str(),128.f,128.f);
 
     createShaders();
     createMeshes();
@@ -91,7 +94,6 @@ void MyGL::paintGL()
     //Set Camera Pos(self implement)
     mp_progSurfaceCurrent->setCameraPosition(m_camera);
 
-   // render3DScene();
 
 
     drawFrame();
@@ -409,6 +411,7 @@ void MyGL::drawFrame()
 
     glViewport(0, 0, width* this->devicePixelRatio(), height* this->devicePixelRatio());
     glClearColor(192.0f/255.f, 192.f/255.f, 192.f/255.f, 1.0f);
+
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -417,6 +420,7 @@ void MyGL::drawFrame()
     glLoadIdentity();
 
     NSVGimage* g_image = svgContext.getSVGImage();
+
     // Fit view to bounds
     cx = g_image->width*0.5f;
     cy = g_image->height*0.5f;
@@ -436,6 +440,7 @@ void MyGL::drawFrame()
             view[1] = cy - hh * 1.2f;
             view[3] = cy + hh * 1.2f;
         }
+
         // Size of one pixel.
         px = (view[2] - view[1]) / (float)width;
 

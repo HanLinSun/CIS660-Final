@@ -3,6 +3,8 @@ debug/qrc_textures.o
 debug/qrc_objs.o
 debug/SVGContext.o
 debug/SVGRasterizer.o
+debug/cluster.o
+debug/image_data.o
 debug/main.o
 debug/mainwindow.o
 debug/mygl.o

@@ -14,9 +14,7 @@ private:
     // one tage one cluster, using
     float neighbor_r;
     std::unordered_map<int,std::unique_ptr<cluster>> cluster_data;
-
     std::unordered_map<int,std::unique_ptr<sample>> sample_data;
-
 
 
 

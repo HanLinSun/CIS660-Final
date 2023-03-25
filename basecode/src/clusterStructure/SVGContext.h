@@ -21,6 +21,12 @@ public:
     NSVGshape* getShapesFromImage();
     NSVGimage* getSVGImage();
 
+    //save modified SVG Parser
+    // file path may need to pass from GUI
+    // Here just hard code for debug
+    void saveModifiedSVGImage(const char* filePath, float width, float height);
+
+
 private:
     NSVGimage* m_image;
 };
